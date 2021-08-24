@@ -1,0 +1,66 @@
+package pkg;
+
+import java.util.ArrayList;
+
+public class RouletteSimulator
+{
+	public static class Wheel
+	{
+		private ArrayList<Integer> pastRolls;
+		
+		public int spin()
+		{
+			int result = (int) Math.floor( (Math.random() * 38) );
+			result -= 1;
+			pastRolls.add(result);
+			return result;
+		}
+	}
+	
+	public static class Player
+	{
+		int startCash;
+		int cash;
+		int bet;
+		
+		public void placeBet()
+		{
+			if(bet == 0)
+				bet = 1;
+			else
+				bet *= 2;
+			
+			bet = withdraw(bet);
+		}
+		
+		public int withdraw(int amount)
+		{
+			if(amount > cash)
+				amount = cash;
+			cash -= amount;
+			return amount;
+		}
+	}
+
+	public static void main(String[] args) throws InterruptedException
+	{
+		Wheel wheel = new Wheel();
+		Player nev = new Player();
+		
+		while(true)
+		{
+			nev.placeBet();
+			int result = wheel.spin();
+			
+			if(result >= 1 && result <= 18)
+				nev.cash = nev.bet*2;
+			
+			System.out.println("Result: " + result + ", Bet: " + nev.bet + ", Cash: " + nev.cash);
+			Thread.sleep(500);
+			if(nev.cash > 1000 || nev.cash == 0)
+				break;
+		}
+		
+	}
+
+}
